@@ -33,3 +33,26 @@ def text_graph(graph):
         deps = ', '.join(f'{n}@{v}' for n, v in sorted(children)) or '(нет раскрытых зависимостей)'
         lines.append(f'{node[0]}@{node[1]} -> {deps}')
     return '\n'.join(lines)
+
+
+def reverse_dependencies(graph, target, max_depth):
+    """Переворачиваем стрелки и снова обходим граф стеком."""
+    reverse = {node: set() for node in graph}
+    for parent, children in graph.items():
+        for child in children:
+            reverse.setdefault(child, set()).add(parent)
+    starts = [node for node in reverse if node[0].casefold() == target.casefold()]
+    if not starts:
+        raise ValueError(f'Пакет {target} отсутствует в исследованном графе')
+    result, best = set(), {}
+    stack = [(node, 0) for node in starts]
+    while stack:
+        node, depth = stack.pop()
+        if node in best and best[node] <= depth:
+            continue
+        best[node] = depth
+        if node not in starts:
+            result.add(node)
+        if depth < max_depth:
+            stack.extend((parent, depth + 1) for parent in sorted(reverse[node], reverse=True))
+    return sorted(result)

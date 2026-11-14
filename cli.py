@@ -15,7 +15,12 @@ def options(argv=None):
     p.add_argument('--filter', default='', help='Исключить имена с этой подстрокой')
     p.add_argument('--stage', type=int, choices=range(1, 6), default=5)
     p.add_argument('--framework', help='Точное имя группы nuspec; без опции объединяем все группы')
+    p.add_argument('--reverse', metavar='PACKAGE', help='Обратные зависимости указанного пакета')
     args = p.parse_args(argv)
+    if args.reverse is not None and not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}', args.reverse):
+        p.error('--reverse: некорректное имя пакета')
+    if args.framework is not None and not args.framework.strip():
+        p.error('--framework не должен быть пустым')
     if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}', args.package):
         p.error('--package: допустимы латинские буквы, цифры, _, . и -')
     if not re.fullmatch(r'\d+(?:\.\d+){1,3}(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?', args.version):
@@ -38,3 +43,4 @@ def options(argv=None):
         if u.scheme not in ('http', 'https') or not u.netloc:
             p.error('--repository: нужен http(s) URL индекса NuGet v3')
     return args
+

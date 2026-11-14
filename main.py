@@ -1,4 +1,8 @@
 """Точка входа: выбор этапа демонстрации."""
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from visualize import dot_graph, save_html
 from cli import options
 from repository import NuGetRepository, TestRepository
 from graph import build_graph, text_graph, reverse_dependencies
@@ -31,12 +35,23 @@ def main():
         result = reverse_dependencies(graph, args.reverse, args.max_depth)
         print('\n'.join(f'{n}@{v}' for n, v in result) or 'Обратных зависимостей нет.')
         return
-    print(text_graph(graph))
+    if args.stage < 5:
+        print(text_graph(graph))
+        return
+    dot = dot_graph(graph)
+    print(dot)
+    Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.output).write_text(dot + '\n', encoding='utf-8')
+    if args.html:
+        save_html(graph, dot, args.html)
+    if not args.test and args.framework is None:
+        print('Примечание: объединены зависимости всех групп .NET из nuspec.', file=sys.stderr)
 
 
 if __name__ == '__main__':
     try:
         main()
-    except (ValueError, OSError, KeyError, TypeError) as error:
+    except (ValueError, OSError, KeyError, TypeError, ET.ParseError) as error:
         raise SystemExit(f'Ошибка: {error}') from error
+
 

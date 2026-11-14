@@ -1,0 +1,7 @@
+digraph Dependencies {
+  rankdir=LR;
+  node [shape=box];
+  "B@1.0.0";
+  "B@1.0.0" -> "D@1.0.0";
+  "D@1.0.0";
+}

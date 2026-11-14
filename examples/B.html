@@ -1,7 +1,0 @@
-<!doctype html><html lang="ru"><meta charset="utf-8"><title>NuGet — вариант 15</title><style>body{background:#101b2c;color:#edf4ff;font:18px Arial;margin:30px}svg{width:100%;max-height:75vh}pre{white-space:pre-wrap;background:#21334e;padding:20px}</style><h1>Зависимости NuGet</h1><p>Стрелка A → B: пакету A нужен пакет B. На пределе глубины зависимости не раскрываются.</p><svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><marker id="a" markerWidth="10" markerHeight="10" refX="10" refY="3" orient="auto"><path d="M0,0 L0,6 L10,3 z" fill="#75d9c4"/></marker></defs><line x1="860.0" y1="500.0" x2="210.0" y2="500.00000000000006" stroke="#75d9c4" stroke-width="2" marker-end="url(#a)"/><circle cx="860.0" cy="500.0" r="68" fill="#233957" stroke="#92a8c9"/><text x="860.0" y="500.0" text-anchor="middle" fill="white" font-size="13"><tspan x="860.0" dy="-4">B</tspan><tspan x="860.0" dy="20">1.0.0</tspan></text><circle cx="140.0" cy="500.00000000000006" r="68" fill="#233957" stroke="#92a8c9"/><text x="140.0" y="500.00000000000006" text-anchor="middle" fill="white" font-size="13"><tspan x="140.0" dy="-4">D</tspan><tspan x="140.0" dy="20">1.0.0</tspan></text></svg><h2>Graphviz DOT</h2><pre>digraph Dependencies {
-  rankdir=LR;
-  node [shape=box];
-  &quot;B@1.0.0&quot;;
-  &quot;B@1.0.0&quot; -&gt; &quot;D@1.0.0&quot;;
-  &quot;D@1.0.0&quot;;
-}</pre><p>Картинка: автономный SVG-просмотр. Для раскладки Graphviz используйте .dot.</p></html>

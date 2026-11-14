@@ -17,7 +17,7 @@ def options(argv=None):
     p.add_argument('--framework', help='Точное имя группы nuspec; без опции объединяем все группы')
     p.add_argument('--reverse', metavar='PACKAGE', help='Обратные зависимости указанного пакета')
     p.add_argument('--output', default='output/graph.dot', help='Куда сохранить DOT')
-    p.add_argument('--html', help='Дополнительно сохранить схему HTML')
+    p.add_argument('--png', default='output/graph.png', help='Куда сохранить картинку PNG')
     args = p.parse_args(argv)
     if args.reverse is not None and not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}', args.reverse):
         p.error('--reverse: некорректное имя пакета')
@@ -45,5 +45,6 @@ def options(argv=None):
         if u.scheme not in ('http', 'https') or not u.netloc:
             p.error('--repository: нужен http(s) URL индекса NuGet v3')
     return args
+
 
 

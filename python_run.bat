@@ -7,4 +7,6 @@ if exist "%PYTHON_EXE%" goto configured
 set "PYTHON_EXE=python"
 :configured
 "%PYTHON_EXE%" %*
-if errorlevel 1 pause
+set "_run_result=%errorlevel%"
+if not "%_run_result%"=="0" pause
+exit /b %_run_result%

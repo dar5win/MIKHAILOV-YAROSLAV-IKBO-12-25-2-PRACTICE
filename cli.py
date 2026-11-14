@@ -14,6 +14,7 @@ def options(argv=None):
     p.add_argument('--max-depth', type=int, default=3, help='0 — только корень; 1 — прямые связи')
     p.add_argument('--filter', default='', help='Исключить имена с этой подстрокой')
     p.add_argument('--stage', type=int, choices=range(1, 6), default=5)
+    p.add_argument('--framework', help='Точное имя группы nuspec; без опции объединяем все группы')
     args = p.parse_args(argv)
     if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}', args.package):
         p.error('--package: допустимы латинские буквы, цифры, _, . и -')

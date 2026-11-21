@@ -1,4 +1,3 @@
-"""Graphviz DOT и PNG: светлые блоки, стрелки, расположение слева направо."""
 import json
 import math
 from collections import deque
@@ -22,7 +21,7 @@ def dot_graph(graph):
 
 
 def save_png(graph, dot, path):
-    """Использует установленный Graphviz; иначе рисует схему через Pillow."""
+
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
     executable = shutil.which('dot')
@@ -38,7 +37,7 @@ def save_png(graph, dot, path):
 
 
 def draw_png(graph, path):
-    """Автономная слоистая раскладка; не используется для получения зависимостей."""
+
     try:
         from PIL import Image, ImageDraw, ImageFont
     except ImportError as error:
@@ -55,7 +54,7 @@ def draw_png(graph, path):
         return ImageFont.load_default(size=size * scale)
     title_font, version_font = font(19), font(15)
     measure = ImageDraw.Draw(Image.new('RGB', (1, 1)))
-    # Коротчайшие расстояния задают колонки, без рекурсии и зацикливания.
+    
     levels = {}
     for root in graph:
         if root in levels:

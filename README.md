@@ -1,55 +1,23 @@
 # Вариант 15 — граф зависимостей NuGet
 
-## Как открыть граф
+## Запуск в терминале VS Code
 
-Дважды нажмите **START_DEMO.bat**. Программа создаст `output/graph.png`
-и откроет картинку в стандартном приложении Windows для изображений.
-Белый фон, скругленные блоки, корневой пакет выделен цветом, стрелки идут
-слева направо. Браузер для демонстрации не используется.
-
-Готовые примеры: `examples/A.png`, `examples/B.png`, `examples/C.png`.
-Их можно открыть обычным двойным щелчком.
-
-## Установка и запуск
-
-Python 3.10+. Для изображения без установленного Graphviz нужна Pillow:
+Открой папку NuGet_Variant_15 в VS Code: «Файл → Открыть папку».
+Выбери «Терминал → Создать терминал» и выполни команды по очереди:
 
 ```powershell
-.\python_run.bat -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --open
 ```
 
-На текущем компьютере Pillow уже есть в используемом Python.
-На другом компьютере установите Python в PATH либо задайте PYTHON_EXE.
-Если установлен Graphviz и команда dot доступна, PNG рисуется его движком.
-В противном случае работает встроенная слоистая раскладка через Pillow.
-Для получения зависимостей используются только стандартные средства Python;
-Pillow используется исключительно для рисования картинки.
+Если открыта родительская папка, сначала введи `cd .\NuGet_Variant_15`.
+Нужен обычный Python 3.10+ с добавлением в PATH, установленный отдельно от ChatGPT.
+После установки перезапусти VS Code. Проверь установку командой `python --version`.
+При каждом запуске программа заново строит граф из данных и перезаписывает PNG.
+Опция `--open` открывает только что созданный PNG в просмотрщике Windows.
+Для рисования используется установленный Graphviz, а если его нет — Pillow.
 
-Откройте PowerShell в папке проекта (в адресной строке Проводника введите powershell).
-
-```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --png output/graph.png
-.\python_run.bat -m unittest discover -s tests -v
-```
-
-## Файлы
-
-| Файл | Для чего |
-|---|---|
-| START_DEMO.bat | Построить учебный граф и открыть PNG |
-| TESTS.bat | Автоматические проверки |
-| REAL_EXAMPLES.bat | Три реальных пакета; нужен интернет для Python |
-| python_run.bat | Вспомогательный выбор Python |
-| main.py | Управляет выполнением этапов |
-| cli.py | Настройки командной строки и их проверка |
-| repository.py | HTTP-запросы, чтение XML NuGet и учебного JSON |
-| graph.py | DFS со стеком, глубина, фильтрация, обратные связи |
-| visualize.py | Текст Graphviz DOT и картинка PNG |
-| requirements.txt | Зависимость Pillow для рисования без Graphviz |
-| data | Учебные репозитории |
-| examples | Три готовые PNG-схемы и соответствующие DOT-файлы |
-| output | Результаты запусков |
-| GUIDE_RU.md | Понятное объяснение и подготовка к защите |
+Проверки: `python -m unittest discover -s tests -v`.
 
 ## Настройки
 
@@ -66,20 +34,21 @@ Pillow используется исключительно для рисован
 | --framework | Точное имя группы nuspec; без опции объединяются все группы |
 | --output | DOT-файл, по умолчанию output/graph.dot |
 | --png | PNG-файл, по умолчанию output/graph.png |
+| --open | Открыть PNG после новой генерации |
 | --help | Справка |
 
 Этапы 1–4 печатают текст; этап 5 печатает DOT, сохраняет DOT и PNG.
-Сам main.py только сохраняет изображение; START_DEMO.bat также открывает его.
+Открой PNG командой `Invoke-Item .\output\graph.png`.
 HTML-вывод заменен PNG: старую опцию --html использовать не нужно.
 
 ## Показ этапов
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 1
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 2
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 4 --reverse D --max-depth 3
-.\python_run.bat main.py --test --repository data/cycle.json --package A --version 1.0.0 --max-depth 10 --png output/cycle.png
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 1
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 2
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 4 --reverse D --max-depth 3
+python main.py --test --repository data/cycle.json --package A --version 1.0.0 --max-depth 10 --png output/cycle.png
 ```
 
 ## Данные и алгоритм
@@ -107,7 +76,14 @@ branch.json — ветвление, cycle.json — цикл, empty.json — па
 Офлайн-тесты и генерация PNG проверены. Сетевой запрос Python в текущей среде
 блокируется Windows 10013, поэтому реальный запуск API не подтвержден.
 Установленного .NET SDK здесь нет; фактическое сравнение с dotnet не выполнено.
-Для реального прогона используйте REAL_EXAMPLES.bat при доступном интернете.
+Для реального запуска нужен интернет для Python:
+
+```powershell
+python main.py --package Serilog --version 3.1.1 --max-depth 2 --output output/Serilog.dot --png output/Serilog.png
+python main.py --package Humanizer.Core --version 2.14.1 --max-depth 2 --output output/Humanizer.dot --png output/Humanizer.png
+python main.py --package Microsoft.Extensions.Logging --version 8.0.0 --max-depth 2 --output output/Logging.dot --png output/Logging.png
+```
+
 
 Программа объединяет группы зависимостей всех платформ .NET, если не задан
 точный --framework. Это может отличаться от зависимостей конкретного проекта.

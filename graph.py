@@ -1,6 +1,3 @@
-"""DFS со стеком вместо рекурсии."""
-
-
 def build_graph(repository, root, max_depth, excluded=''):
     graph, best = {root: set()}, {}
     stack = [(root, 0)]
@@ -36,7 +33,7 @@ def text_graph(graph):
 
 
 def reverse_dependencies(graph, target, max_depth):
-    """Переворачиваем стрелки и снова обходим граф стеком."""
+
     reverse = {node: set() for node in graph}
     for parent, children in graph.items():
         for child in children:

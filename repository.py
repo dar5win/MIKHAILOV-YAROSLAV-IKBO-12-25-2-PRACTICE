@@ -1,4 +1,3 @@
-"""Этап 2: HTTP + JSON + XML. Менеджер NuGet и сторонние библиотеки не используются."""
 import json
 import re
 from pathlib import Path
@@ -8,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 
 def version_key(value):
-    """Сравнение числовой версии и SemVer prerelease (числа меньше строк)."""
+
     core, _, pre = value.split('+', 1)[0].partition('-')
     if not re.fullmatch(r'\d+(?:\.\d+){0,3}', core):
         raise ValueError(f'Неподдерживаемая версия: {value}')
@@ -19,7 +18,7 @@ def version_key(value):
 
 
 def satisfies(version, requirement):
-    """NuGet: 1.0 — минимум; [1.0] — точно; [1.0,2.0) — интервал."""
+
     r = requirement.strip()
     v = version_key(version)
     if not r or r == '(,)':
@@ -65,7 +64,7 @@ class NuGetRepository:
         return self.version_cache[name]
 
     def resolve(self, name, requirement):
-        # Для стабильного требования берем стабильную минимальную подходящую версию.
+        
         candidates = [v for v in self.versions(name)
                       if ('-' in requirement or '-' not in v) and satisfies(v, requirement)]
         if not candidates:
@@ -83,7 +82,7 @@ class NuGetRepository:
             return self.dependency_cache[node]
         name, version = node
         tree = ET.fromstring(read_url(f'{self.base}{name}/{version}/{name}.nuspec'))
-        # Снимаем namespace, чтобы работать со всеми версиями схемы nuspec.
+        
         for element in tree.iter():
             element.tag = element.tag.rsplit('}', 1)[-1]
         container = tree.find('./metadata/dependencies')
@@ -109,7 +108,7 @@ class NuGetRepository:
 
 
 class TestRepository:
-    """Учебная карта: имена A, B, C; у всех точная версия 1.0.0."""
+
     def __init__(self, path):
         self.packages = json.loads(Path(path).read_text(encoding='utf-8-sig'))['packages']
         if not isinstance(self.packages, dict) or not self.packages:

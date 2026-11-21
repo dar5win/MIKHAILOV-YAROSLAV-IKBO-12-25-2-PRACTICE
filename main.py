@@ -1,5 +1,5 @@
-"""Точка входа: выбор этапа демонстрации."""
 import sys
+import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from visualize import dot_graph, save_png
@@ -44,6 +44,11 @@ def main():
     Path(args.output).write_text(dot + '\n', encoding='utf-8')
     save_png(graph, dot, args.png)
     print(f'PNG: {Path(args.png).resolve()}')
+    if args.open:
+        if sys.platform == 'win32':
+            os.startfile(str(Path(args.png).resolve()))
+        else:
+            raise ValueError('--open поддерживается в Windows; PNG уже сохранён')
     if not args.test and args.framework is None:
         print('Примечание: объединены зависимости всех групп .NET из nuspec.', file=sys.stderr)
 

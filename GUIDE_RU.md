@@ -18,20 +18,30 @@
 Вариант 15 находится на страницах 50–52 PDF. Не путай с эмулятором терминала
 в соседней папке: это другое задание.
 
-## 2. Что открыть первым
+## Запуск в терминале VS Code
 
-1. Открой папку NuGet_Variant_15.
-2. Дважды нажми START_DEMO.bat.
-3. Откроется PNG-картинка со схемой A, B, C, D, E в просмотрщике изображений Windows.
-4. Стрелка от A к B означает: A использует B.
-5. В чёрном окне виден текст Graphviz DOT; сама картинка сохраняется в output/graph.png.
+Открой папку NuGet_Variant_15 в VS Code: «Файл → Открыть папку».
+Выбери «Терминал → Создать терминал» и выполни команды по очереди:
 
-Если Windows сообщает, что Python не найден, установи Python 3.10 или новее
-с добавлением в PATH. На текущем компьютере запуск также умеет использовать
-уже имеющийся Python среды ChatGPT.
+```powershell
+python -m pip install -r requirements.txt
+python main.py --test --repository data/branch.json --package A --version 1.0.0
+Invoke-Item .\output\graph.png
+```
 
-Важно: интерактивной формы ввода здесь нет. По заданию нужна программа
-командной строки. Настройки вводятся при запуске, а не кликами в форме.
+Если открыта родительская папка, сначала введи `cd .\NuGet_Variant_15`.
+Если python не найден, на этом компьютере подключи имеющийся Python для текущего
+терминала следующей командой, затем повтори запуск:
+
+```powershell
+$env:Path = "$env:USERPROFILE\.cache\codex-runtimes\codex-primary-runtime\dependencies\python;$env:Path"
+```
+
+На другом компьютере нужен Python 3.10+ с добавлением в PATH.
+Программа сохраняет PNG, команда Invoke-Item открывает его в просмотрщике Windows.
+Для рисования используется установленный Graphviz, а если его нет — Pillow.
+
+Проверки: `python -m unittest discover -s tests -v`.
 
 ## 3. Словарь без сложных слов
 
@@ -63,18 +73,17 @@ NuGet-репозиторий и Git-репозиторий — разные ве
 
 ## 4. Как вводить команды
 
-В папке проекта нажми адресную строку Проводника, напиши powershell,
-нажми Enter. Откроется терминал сразу в нужной папке.
+В VS Code открой «Терминал → Создать терминал» в папке NuGet_Variant_15.
 
 Вставляй команды ниже целиком. После каждой нажимай Enter.
 `--` означает название настройки. Слова после него — ее значение.
 Например `--package A`: анализировать пакет A.
-`.\python_run.bat` выбирает Python и запускает его; `main.py` — наша программа.
+`python` запускает Python; `main.py` — наша программа.
 
 ## 5. Показать первый этап — настройки
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --max-depth 3 --stage 1
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --max-depth 3 --stage 1
 ```
 
 Появятся строки package=A, version=1.0.0 и другие настройки.
@@ -87,17 +96,17 @@ NuGet-репозиторий и Git-репозиторий — разные ве
 Показать неправильную глубину:
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --max-depth -1 --stage 1
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --max-depth -1 --stage 1
 ```
 
-Должна появиться понятная ошибка. BAT может предложить нажать клавишу.
+Должна появиться понятная ошибка.
 Это правильно: отрицательного числа уровней быть не может.
-Другие проверки есть в TESTS.bat: неверное имя, версия, URL, файл, фильтр.
+Другие проверки запускаются командой `python -m unittest discover -s tests -v`: неверное имя, версия, URL, файл, фильтр.
 
 ## 6. Второй этап — прямые зависимости
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 2
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 2
 ```
 
 Ожидаемый результат: B и C с диапазоном [1.0.0].
@@ -110,7 +119,7 @@ D и E пока не выводятся: они нужны не самому A �
 ## 7. Третий этап — вся цепочка
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3
 ```
 
 Будут связи A с B и C, B с D, C с D и E.
@@ -125,7 +134,7 @@ B и C при этом будут без раскрытых связей: про
 Исключить B:
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3 --filter B
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3 --filter B
 ```
 
 B исчезнет, но D останется: к нему можно прийти через C.
@@ -134,7 +143,7 @@ B исчезнет, но D останется: к нему можно прийт
 Показать цикл:
 
 ```powershell
-.\python_run.bat main.py --test --repository data/cycle.json --package A --version 1.0.0 --stage 3 --max-depth 100
+python main.py --test --repository data/cycle.json --package A --version 1.0.0 --stage 3 --max-depth 100
 ```
 
 Получится A нужен B, B нужен C, C нужны A и D. Программа завершится.
@@ -148,7 +157,7 @@ B исчезнет, но D останется: к нему можно прийт
 ## 8. Четвертый этап — кому нужен пакет D
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 4 --reverse D --max-depth 3
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 4 --reverse D --max-depth 3
 ```
 
 Ожидаемый результат: A, B, C, F.
@@ -166,14 +175,14 @@ F появляется потому, что обратный поиск в те�
 
 ## 9. Пятый этап — схема
 
-Дважды нажми START_DEMO.bat: программа создаст output/graph.png и
-откроет ее как обычную картинку. Браузер не нужен.
+Команда ниже создаст output/graph.png. Открой картинку командой
+`Invoke-Item .\output\graph.png`.
 Белый фон, блоки со скругленными углами, стрелки слева направо.
 
 Ручной запуск из PowerShell в папке проекта:
 
 ```powershell
-.\python_run.bat main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 5 --png output/graph.png
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 5 --png output/graph.png
 ```
 
 После ручного запуска открой output/graph.png двойным щелчком.
@@ -184,7 +193,7 @@ F появляется потому, что обратный поиск в те�
 Если на другом компьютере появится сообщение, что Pillow отсутствует:
 
 ```powershell
-.\python_run.bat -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 Скажи: «Программа формирует описание графа на языке Graphviz DOT,
@@ -193,9 +202,14 @@ F появляется потому, что обратный поиск в те�
 
 ## 10. Что сказать о настоящем NuGet
 
-Для реального запуска есть REAL_EXAMPLES.bat. Нужен интернет для Python.
-Он запускает Serilog 3.1.1, Humanizer.Core 2.14.1 и
-Microsoft.Extensions.Logging 8.0.0. Команды также приведены в README.
+Для реального запуска нужен интернет для Python:
+
+```powershell
+python main.py --package Serilog --version 3.1.1 --max-depth 2 --output output/Serilog.dot --png output/Serilog.png
+python main.py --package Humanizer.Core --version 2.14.1 --max-depth 2 --output output/Humanizer.dot --png output/Humanizer.png
+python main.py --package Microsoft.Extensions.Logging --version 8.0.0 --max-depth 2 --output output/Logging.dot --png output/Logging.png
+```
+
 
 Проверку настоящего API из текущей среды заблокировал Windows: ошибка 10013.
 Это не успешный сетевой тест. До окончательной сдачи нужно прогнать примеры

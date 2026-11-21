@@ -1,6 +1,0 @@
-{
-  "python.defaultInterpreterPath": "C:\\workspace\\Python312\\python.exe",
-  "terminal.integrated.env.windows": {
-    "PATH": "C:\\workspace\\Python312;${env:PATH}"
-  }
-}

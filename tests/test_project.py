@@ -5,9 +5,10 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError, URLError
 from cli import options
 from graph import build_graph, reverse_dependencies
-from repository import TestRepository, NuGetRepository, satisfies
+from repository import TestRepository, NuGetRepository, read_url, satisfies
 from visualize import dot_graph
 
 
@@ -80,9 +81,21 @@ class Tests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 TestRepository(path)
 
+    def test_network_retries_transient_errors_only(self):
+        url = 'https://example.org/index.json'
+        response = io.BytesIO(b'{}')
+        with patch('repository.urlopen', side_effect=[URLError(TimeoutError()), response]) as request:
+            self.assertEqual(read_url(url), b'{}')
+            self.assertEqual(request.call_count, 2)
+        missing = HTTPError(url, 404, 'Not found', None, None)
+        with patch('repository.urlopen', side_effect=missing) as request:
+            with self.assertRaisesRegex(ValueError, '404'):
+                read_url(url)
+            self.assertEqual(request.call_count, 1)
+
     def test_cli_errors(self):
         base = ['--package','A','--version','1.0.0','--test','--repository','data/branch.json']
-        for extra in [['--max-depth','-1'],['--version','blah'],['--package','!'],['--repository','missing.json'],['--filter','A'],['--framework',' '],['--reverse','!']]:
+        for extra in [['--max-depth','-1'],['--version','blah'],['--package','!'],['--repository','missing.json'],['--filter','A'],['--framework',' '],['--reverse','!'],['--stage','4']]:
             with self.subTest(extra=extra), contextlib.redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit) as error:
                     options(base+extra)

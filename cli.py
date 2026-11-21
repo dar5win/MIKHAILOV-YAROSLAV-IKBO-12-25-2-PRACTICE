@@ -19,6 +19,8 @@ def options(argv=None):
     p.add_argument('--png', default='output/graph.png', help='Куда сохранить картинку PNG')
     p.add_argument('--open', action='store_true', help='Открыть PNG после новой генерации')
     args = p.parse_args(argv)
+    if args.stage == 4 and args.reverse is None:
+        p.error('--stage 4: укажите пакет для обратного поиска, например --reverse D')
     if args.reverse is not None and not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,99}', args.reverse):
         p.error('--reverse: некорректное имя пакета')
     if args.framework is not None and not args.framework.strip():

@@ -20,10 +20,11 @@ def main():
         deps = repository.dependencies(root)
         print('\n'.join(f'{name}: {requirement}' for name, requirement in deps) or 'Прямых зависимостей нет.')
         return
-    graph = build_graph(repository, root, args.max_depth, args.filter)
+    graph = {}
+    if not (args.reverse and args.test):
+        graph = build_graph(repository, root, args.max_depth, args.filter)
     if args.reverse:
         if args.test:
-            graph = {}
             for name in repository.packages:
                 if args.filter and args.filter.casefold() in name.casefold():
                     continue

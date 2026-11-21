@@ -1,8 +1,9 @@
 import json
 import re
+from http.client import IncompleteRead, RemoteDisconnected
 from pathlib import Path
 from urllib.request import Request, urlopen
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 import xml.etree.ElementTree as ET
 
 
@@ -38,12 +39,15 @@ def satisfies(version, requirement):
 
 
 def read_url(url):
-    try:
-        request = Request(url, headers={'User-Agent': 'Student-NuGet-Graph/1.0'})
-        with urlopen(request, timeout=20) as response:
-            return response.read()
-    except (URLError, OSError) as error:
-        raise ValueError(f'Не удалось получить {url}: {error}') from error
+    request = Request(url, headers={'User-Agent': 'Student-NuGet-Graph/1.0'})
+    for attempt in range(3):
+        try:
+            with urlopen(request, timeout=20) as response:
+                return response.read()
+        except (URLError, OSError, IncompleteRead, RemoteDisconnected) as error:
+            retryable = not isinstance(error, HTTPError) or error.code in (408, 429, 500, 502, 503, 504)
+            if not retryable or attempt == 2:
+                raise ValueError(f'Не удалось получить {url}: {error}') from error
 
 
 class NuGetRepository:

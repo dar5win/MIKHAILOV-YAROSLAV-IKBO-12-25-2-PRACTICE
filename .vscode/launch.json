@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Показать граф зависимостей",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "args": [
+        "--test",
+        "--repository", "data/branch.json",
+        "--package", "A",
+        "--version", "1.0.0",
+        "--open"
+      ]
+    }
+  ]
+}

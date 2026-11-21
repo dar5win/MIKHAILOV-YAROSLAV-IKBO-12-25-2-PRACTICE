@@ -1,28 +1,33 @@
 # Вариант 15 — граф зависимостей NuGet
 
-## Запуск в VS Code
+## Запуск из терминала
 
-1. Открой папку проекта, в которой лежит `main.py`.
-2. Выбери свой Python 3.10 или новее через `Ctrl+Shift+P` → `Python: Select Interpreter`. Для кнопки запуска нужны расширения Python и Python Debugger.
-3. Если выбранный Python ещё не содержит Pillow и в системе нет Graphviz, установи зависимости в новом терминале VS Code:
-
-   ```powershell
-   python -m pip install -r requirements.txt
-   ```
-
-4. В панели «Запуск и отладка» (`Ctrl+Shift+D`) выбери «Показать граф зависимостей» и нажми ▶ или `F5`.
-
-Тот же пример можно запустить из терминала:
+Открой папку проекта в VS Code и создай терминал. Нужен Python 3.10 или новее.
+Если Graphviz не установлен, установи Pillow:
 
 ```powershell
-python main.py --test --repository data/branch.json --package A --version 1.0.0 --open
+python -m pip install -r requirements.txt
 ```
 
-При каждом запуске программа заново строит граф из данных и перезаписывает PNG.
-Опция `--open` открывает только что созданный PNG в просмотрщике Windows.
-Для рисования используется установленный Graphviz, а если его нет — Pillow.
+В Windows запусти учебный пример из PowerShell:
 
-Проверки: `python -m unittest discover -s tests -v`.
+```powershell
+.\run.ps1
+```
+
+В Linux или macOS выполни `./run.sh`. Оба скрипта без аргументов строят
+учебный граф для пакета A. Результат сохраняется в `output/`.
+Чтобы передать свои параметры или запустить программу напрямую, используй
+такие же аргументы, как в примере:
+
+```powershell
+python -m src.main --test --repository data/branch.json --package A --version 1.0.0 --open
+```
+
+Опция `--open` работает в Windows и открывает PNG после генерации.
+Для рисования используется Graphviz, а если его нет, Pillow.
+Исходники лежат в `src/`. Проверки запускаются из корня проекта командой
+`python -m unittest discover -s tests -v`.
 
 ## Настройки
 
@@ -48,13 +53,13 @@ python main.py --test --repository data/branch.json --package A --version 1.0.0 
 ## Показ этапов
 
 ```powershell
-python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 1
-python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 2
-python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3
-python main.py --test --repository data/branch.json --package A --version 1.0.0 --stage 4 --reverse D --max-depth 3
-python main.py --test --repository data/cycle.json --package A --version 1.0.0 --stage 4 --reverse A
-python main.py --test --repository data/empty.json --package A --version 1.0.0 --stage 4 --reverse A
-python main.py --test --repository data/cycle.json --package A --version 1.0.0 --max-depth 10 --png output/cycle.png
+python -m src.main --test --repository data/branch.json --package A --version 1.0.0 --stage 1
+python -m src.main --test --repository data/branch.json --package A --version 1.0.0 --stage 2
+python -m src.main --test --repository data/branch.json --package A --version 1.0.0 --stage 3 --max-depth 3
+python -m src.main --test --repository data/branch.json --package A --version 1.0.0 --stage 4 --reverse D --max-depth 3
+python -m src.main --test --repository data/cycle.json --package A --version 1.0.0 --stage 4 --reverse A
+python -m src.main --test --repository data/empty.json --package A --version 1.0.0 --stage 4 --reverse A
+python -m src.main --test --repository data/cycle.json --package A --version 1.0.0 --max-depth 10 --png output/cycle.png
 ```
 
 ## Данные и алгоритм
@@ -85,9 +90,9 @@ Humanizer.Core 2.14.1 с глубиной 1.
 Для реального запуска нужен интернет для Python:
 
 ```powershell
-python main.py --package Serilog --version 3.1.1 --max-depth 2 --output output/Serilog.dot --png output/Serilog.png
-python main.py --package Humanizer.Core --version 2.14.1 --max-depth 2 --output output/Humanizer.dot --png output/Humanizer.png
-python main.py --package Microsoft.Extensions.Logging --version 8.0.0 --max-depth 2 --output output/Logging.dot --png output/Logging.png
+python -m src.main --package Serilog --version 3.1.1 --max-depth 2 --output output/Serilog.dot --png output/Serilog.png
+python -m src.main --package Humanizer.Core --version 2.14.1 --max-depth 2 --output output/Humanizer.dot --png output/Humanizer.png
+python -m src.main --package Microsoft.Extensions.Logging --version 8.0.0 --max-depth 2 --output output/Logging.dot --png output/Logging.png
 ```
 
 

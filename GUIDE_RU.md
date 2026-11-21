@@ -25,20 +25,14 @@
 
 ```powershell
 python -m pip install -r requirements.txt
-python main.py --test --repository data/branch.json --package A --version 1.0.0
-Invoke-Item .\output\graph.png
+python main.py --test --repository data/branch.json --package A --version 1.0.0 --open
 ```
 
 Если открыта родительская папка, сначала введи `cd .\NuGet_Variant_15`.
-Если python не найден, на этом компьютере подключи имеющийся Python для текущего
-терминала следующей командой, затем повтори запуск:
-
-```powershell
-$env:Path = "$env:USERPROFILE\.cache\codex-runtimes\codex-primary-runtime\dependencies\python;$env:Path"
-```
-
-На другом компьютере нужен Python 3.10+ с добавлением в PATH.
-Программа сохраняет PNG, команда Invoke-Item открывает его в просмотрщике Windows.
+Нужен обычный Python 3.10+ с добавлением в PATH, установленный отдельно от ChatGPT.
+После установки перезапусти VS Code. Команда python --version покажет версию.
+При каждом запуске программа заново строит граф из данных и перезаписывает PNG.
+Опция --open открывает только что созданный PNG в просмотрщике Windows.
 Для рисования используется установленный Graphviz, а если его нет — Pillow.
 
 Проверки: `python -m unittest discover -s tests -v`.
